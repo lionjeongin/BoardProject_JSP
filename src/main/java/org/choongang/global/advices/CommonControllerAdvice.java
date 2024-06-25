@@ -3,6 +3,9 @@ package org.choongang.global.advices;
 import jakarta.servlet.http.HttpServletRequest;
 import org.choongang.global.config.annotations.ControllerAdvice;
 import org.choongang.global.config.annotations.ModelAttribute;
+import org.choongang.global.exceptions.AlertBackException;
+import org.choongang.global.exceptions.AlertException;
+import org.choongang.global.exceptions.CommonException;
 import org.choongang.global.exceptions.ExceptionHandler;
 
 @ControllerAdvice("org.choongang")
@@ -22,7 +25,19 @@ public class CommonControllerAdvice {
      */
     @ExceptionHandler(Exception.class)
     public String errorHandler(Exception e, HttpServletRequest request) {
+        if (e instanceof CommonException commonException) {
+            int status = commonException.getStatus();
+            StringBuffer sb = new StringBuffer(1000);
+            if (e instanceof AlertException alertException) {
+                sb.append(String.format("alert('%s');", e.getMessage()));
+            }
 
+            if (e instanceof AlertBackException alertBackException) {
+                String target = alertBackException.getTarget();
+                sb.append(String.format("%s.history.back();", target));
+            }
+
+        }
         return "errors/error";
     }
 }
