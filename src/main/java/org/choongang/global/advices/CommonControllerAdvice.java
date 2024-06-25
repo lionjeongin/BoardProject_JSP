@@ -1,12 +1,10 @@
 package org.choongang.global.advices;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.choongang.global.config.annotations.ControllerAdvice;
 import org.choongang.global.config.annotations.ModelAttribute;
-import org.choongang.global.exceptions.AlertBackException;
-import org.choongang.global.exceptions.AlertException;
-import org.choongang.global.exceptions.CommonException;
-import org.choongang.global.exceptions.ExceptionHandler;
+import org.choongang.global.exceptions.*;
 
 @ControllerAdvice("org.choongang")
 public class CommonControllerAdvice {
@@ -24,9 +22,11 @@ public class CommonControllerAdvice {
      * @return
      */
     @ExceptionHandler(Exception.class)
-    public String errorHandler(Exception e, HttpServletRequest request) {
+    public String errorHandler(Exception e, HttpServletRequest request, HttpServletResponse response) {
         if (e instanceof CommonException commonException) {
             int status = commonException.getStatus();
+            response.setStatus(status);
+            
             StringBuffer sb = new StringBuffer(1000);
             if (e instanceof AlertException alertException) {
                 sb.append(String.format("alert('%s');", e.getMessage()));
@@ -37,7 +37,19 @@ public class CommonControllerAdvice {
                 sb.append(String.format("%s.history.back();", target));
             }
 
+            if (e instanceof AlertRedirectException alertRedirectException) {
+                String target = alertRedirectException.getRedirectUrl();
+                String url = alertRedirectException.getRedirectUrl();
+
+                sb.append(String.format("%s.location.replace('%s');", target, url));
+            }
+
+            if (!sb.isEmpty()) {
+                request.setAttribute("script", sb.toString());
+                return "commons/execute_script";
+            }
         }
+
         return "errors/error";
     }
 }
