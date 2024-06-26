@@ -60,10 +60,10 @@ public class HandlerControllerAdvice {
     public List<Object> getControllerAdvices(boolean isRest) {
 
         return BeanContainer.getInstance()
-                    .getBeans()
-                    .values()
-                    .stream()
-                    .filter(b -> Arrays.stream(b.getClass().getAnnotations()).anyMatch(a -> (!isRest && a instanceof ControllerAdvice) || (isRest && a instanceof RestControllerAdvice)))
-                    .toList();
+                .getBeans()
+                .values()
+                .stream()
+                .filter(b -> Arrays.stream(b.getClass().getAnnotations()).anyMatch(a -> (!isRest && a instanceof ControllerAdvice) || (isRest && a instanceof RestControllerAdvice)))
+                .toList();
     }
 }

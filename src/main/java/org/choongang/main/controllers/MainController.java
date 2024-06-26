@@ -14,4 +14,3 @@ public class MainController {
         return "main/index";
     }
 }
-// webapp-WEB-INF-template-main-index.jsp

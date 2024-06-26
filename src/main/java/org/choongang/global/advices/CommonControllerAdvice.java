@@ -16,19 +16,22 @@ public class CommonControllerAdvice {
 
     /**
      * 공통 에러 페이지 처리
-     * 
+     *
      * @param e
      * @param request
      * @return
      */
     @ExceptionHandler(Exception.class)
     public String errorHandler(Exception e, HttpServletRequest request, HttpServletResponse response) {
+
+        e.printStackTrace();
+
         if (e instanceof CommonException commonException) {
             int status = commonException.getStatus();
             response.setStatus(status);
-            
+
             StringBuffer sb = new StringBuffer(1000);
-            if (e instanceof AlertException alertException) {
+            if (e instanceof AlertException) {
                 sb.append(String.format("alert('%s');", e.getMessage()));
             }
 
@@ -38,7 +41,7 @@ public class CommonControllerAdvice {
             }
 
             if (e instanceof AlertRedirectException alertRedirectException) {
-                String target = alertRedirectException.getRedirectUrl();
+                String target = alertRedirectException.getTarget();
                 String url = alertRedirectException.getRedirectUrl();
 
                 sb.append(String.format("%s.location.replace('%s');", target, url));
@@ -49,6 +52,7 @@ public class CommonControllerAdvice {
                 return "commons/execute_script";
             }
         }
+
 
         return "errors/error";
     }

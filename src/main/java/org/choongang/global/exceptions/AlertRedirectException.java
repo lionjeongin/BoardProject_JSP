@@ -11,8 +11,7 @@ public class AlertRedirectException extends AlertException {
         this.target = target;
     }
 
-    public AlertRedirectException(String message, String redirectUrl, int status)
-    {
+    public AlertRedirectException(String message, String redirectUrl, int status) {
         this(message, redirectUrl, status, "self");
     }
 
